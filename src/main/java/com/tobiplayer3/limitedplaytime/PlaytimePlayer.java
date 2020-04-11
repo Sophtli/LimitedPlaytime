@@ -1,19 +1,25 @@
 package com.tobiplayer3.limitedplaytime;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 public class PlaytimePlayer {
 
     private Integer playtime;
-    private Date lastLogin;
+    private LocalDate lastLogin;
+    private UUID uuid;
 
-    public PlaytimePlayer(Integer playtime, Date lastLogin){
+    public PlaytimePlayer(UUID uuid, Integer playtime, LocalDate lastLogin){
         this.playtime = playtime;
         this.lastLogin = lastLogin;
+        this.uuid = uuid;
     }
 
-    public Date getLastLogin() {
+    public UUID getUUID() {
+        return uuid;
+    }
+
+    public LocalDate getLastLogin() {
         return lastLogin;
     }
 
@@ -21,7 +27,7 @@ public class PlaytimePlayer {
         return playtime;
     }
 
-    public void setLastLogin(Date lastLogin) {
+    public void setLastLogin(LocalDate lastLogin) {
         this.lastLogin = lastLogin;
     }
 
