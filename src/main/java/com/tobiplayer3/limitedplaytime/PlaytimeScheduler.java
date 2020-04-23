@@ -1,5 +1,8 @@
 package com.tobiplayer3.limitedplaytime;
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -10,6 +13,7 @@ public class PlaytimeScheduler extends BukkitRunnable {
 
     private PlaytimeManager playtimeManager = PlaytimeManager.getManager();
     private LimitedPlaytime limitedPlaytime = LimitedPlaytime.getInstance();
+    private MessageManager messageManager = MessageManager.getManager();
 
     public void run() {
 
@@ -25,6 +29,8 @@ public class PlaytimeScheduler extends BukkitRunnable {
 
                     int newPlaytime = playtimePlayer.getPlaytime() - 1;
                     playtimePlayer.setPlaytime(newPlaytime);
+
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(messageManager.getMessage(Message.TIME_SHORT, playtimePlayer)));
 
                     if (playtimeManager.isNotifyStep(newPlaytime)) {
                         player.sendMessage(Integer.toString(playtimePlayer.getPlaytime() / 20));
