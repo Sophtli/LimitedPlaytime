@@ -7,6 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +79,7 @@ public class PlaytimeCommand implements CommandExecutor, TabCompleter {
                     l.add(p.getName());
                 }
             }
-            l = l.stream().filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
+            l = l.stream().filter(s -> StringUtil.startsWithIgnoreCase(s, args[0])).collect(Collectors.toList());
         } else if (args.length == 5) {
             if (!args[0].equalsIgnoreCase("set") && !args[0].equalsIgnoreCase("add") && !args[0].equalsIgnoreCase("remove")) {
                 return new ArrayList<>();
@@ -91,7 +92,7 @@ public class PlaytimeCommand implements CommandExecutor, TabCompleter {
                     l.add(p.getName());
                 }
             }
-            l = l.stream().filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase())).collect(Collectors.toList());
+            l = l.stream().filter(s -> StringUtil.startsWithIgnoreCase(s, args[0])).collect(Collectors.toList());
         }
 
         return l;
