@@ -1,0 +1,3 @@
+kick_message: "Your playtime ended for today. Please come back tomorrow!"
+cancel_join_message: "Your playtime ended for today. Please come back tomorrow!"
+join_message: "You have {playtime} left!"
