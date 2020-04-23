@@ -3,7 +3,8 @@ package com.tobiplayer3.limitedplaytime;
 public enum Message {
 
     PREFIX("[LimitedPlaytime] "),
-    TIME("%h% hours %m% minutes %s% seconds"),
+    TIME("&c%hh% hours %mm% minutes %ss% seconds"),
+    TIME_SHORT("%hh%:%mm%:%ss%"),
     JOIN("You have %time% left."),
     PLAYTIME_COMMAND("You have %time% left."),
     PLAYTIME_COMMAND_ERROR(""),
