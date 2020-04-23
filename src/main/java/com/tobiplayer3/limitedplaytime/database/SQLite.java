@@ -7,6 +7,7 @@ import java.io.File;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,12 +39,14 @@ public class SQLite implements Database {
     }
 
     @Override
-    public synchronized Connection getConnection() throws SQLException {
-        if (c == null || c.isClosed()) {
-            c = DriverManager.getConnection("jdbc:sqlite:" + file);
-        }
+    public Connection getConnection() throws SQLException {
+        synchronized (this) {
+            if (c == null || c.isClosed()) {
+                c = DriverManager.getConnection("jdbc:sqlite:" + file);
+            }
 
-        return c;
+            return c;
+        }
     }
 
     @Override
@@ -116,7 +119,30 @@ public class SQLite implements Database {
 
     @Override
     public List<PlaytimePlayer> loadPlayers(List<UUID> uuids) {
-        return null;
+        List<PlaytimePlayer> playtimePlayers = new ArrayList<>();
+        try {
+            Connection connection = getConnection();
+
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM players WHERE uuid=?;")) {
+                for(UUID uuid : uuids) {
+                    statement.setObject(1, uuid);
+
+                    try (ResultSet result = statement.executeQuery()) {
+                        if (result.next()) {
+                            Integer playtime = result.getInt("playtime");
+                            String lastPlayed = result.getString("last_played");
+                            PlaytimePlayer playtimePlayer = new PlaytimePlayer(uuid, playtime, LocalDate.parse(lastPlayed, DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+
+                            playtimePlayers.add(playtimePlayer);
+                        }
+                    }
+                }
+                return playtimePlayers;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return playtimePlayers;
+        }
     }
 
     @Override

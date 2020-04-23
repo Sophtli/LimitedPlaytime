@@ -4,6 +4,9 @@ import com.tobiplayer3.limitedplaytime.PlaytimePlayer;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,19 +50,16 @@ public class MySQL implements Database {
 
     @Override
     public void savePlayer(PlaytimePlayer player) {
-        try {
-            Connection connection = getConnection();
-
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO `players` (`uuid`,`playtime`,`last_played`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `playtime`=?,`last_played`=?;");
-            statement.setString(1, player.getUUID().toString());
-            statement.setInt(2, player.getPlaytime());
-            statement.setDate(3, Date.valueOf(player.getLastLogin()));
-            statement.setInt(4, player.getPlaytime());
-            statement.setDate(5, Date.valueOf(player.getLastLogin()));
-            statement.executeUpdate();
-
-            statement.close();
-            connection.close();
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO `players` (`uuid`," +
+                    "`playtime`,`last_played`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `playtime`=?,`last_played`=?;")) {
+                statement.setString(1, player.getUUID().toString());
+                statement.setInt(2, player.getPlaytime());
+                statement.setDate(3, Date.valueOf(player.getLastLogin()));
+                statement.setInt(4, player.getPlaytime());
+                statement.setDate(5, Date.valueOf(player.getLastLogin()));
+                statement.executeUpdate();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,30 +67,44 @@ public class MySQL implements Database {
 
     @Override
     public void savePlayers(List<PlaytimePlayer> players) {
+        try (Connection connection = getConnection()) {
+            if (players.size() <= 0) {
+                return;
+            }
 
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO players (uuid,playtime,last_played) VALUES (?,?,?) ON CONFLICT(uuid) DO UPDATE SET playtime=?,last_played=?;")) {
+
+                for (PlaytimePlayer player : players) {
+                    statement.setObject(1, player.getUUID());
+                    statement.setInt(2, player.getPlaytime());
+                    statement.setDate(3, Date.valueOf(player.getLastLogin()));
+                    statement.setInt(4, player.getPlaytime());
+                    statement.setDate(5, Date.valueOf(player.getLastLogin()));
+                    statement.executeUpdate();
+                }
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public PlaytimePlayer loadPlayer(UUID uuid) {
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM players WHERE uuid=?;")) {
+                statement.setObject(1, uuid);
+                try (ResultSet result = statement.executeQuery()) {
 
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM players WHERE uuid=?;");
-            statement.setObject(1, uuid);
-            ResultSet result = statement.executeQuery();
-
-            PlaytimePlayer playtimePlayer = null;
-            if (result.next()) {
-                Integer playtime = result.getInt("playtime");
-                Date lastPlayed = result.getDate("last_played");
-                playtimePlayer = new PlaytimePlayer(uuid, playtime, lastPlayed.toLocalDate());
+                    PlaytimePlayer playtimePlayer = null;
+                    if (result.next()) {
+                        Integer playtime = result.getInt("playtime");
+                        Date lastPlayed = result.getDate("last_played");
+                        playtimePlayer = new PlaytimePlayer(uuid, playtime, lastPlayed.toLocalDate());
+                    }
+                    return playtimePlayer;
+                }
             }
-
-            result.close();
-            statement.close();
-            connection.close();
-
-            return playtimePlayer;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -99,7 +113,28 @@ public class MySQL implements Database {
 
     @Override
     public List<PlaytimePlayer> loadPlayers(List<UUID> uuids) {
-        return null;
+        List<PlaytimePlayer> playtimePlayers = new ArrayList<>();
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM players WHERE uuid=?;")) {
+                for (UUID uuid : uuids) {
+                    statement.setObject(1, uuid);
+
+                    try (ResultSet result = statement.executeQuery()) {
+                        if (result.next()) {
+                            Integer playtime = result.getInt("playtime");
+                            Date lastPlayed = result.getDate("last_played");
+                            PlaytimePlayer playtimePlayer = new PlaytimePlayer(uuid, playtime, lastPlayed.toLocalDate());
+
+                            playtimePlayers.add(playtimePlayer);
+                        }
+                    }
+                }
+                return playtimePlayers;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return playtimePlayers;
+        }
     }
 
     @Override
