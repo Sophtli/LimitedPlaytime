@@ -1,50 +1,57 @@
 package com.tobiplayer3.limitedplaytime.database;
 
 import com.tobiplayer3.limitedplaytime.PlaytimePlayer;
+import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.*;
-import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 public class MySQL implements Database {
 
-    private Connection connection;
+    private final HikariDataSource hikari;
 
-    private String host;
-    private String database;
-    private String username;
-    private String password;
-    private int port;
+    public MySQL(String host, int port, String database, String username, String password) {
+        hikari = new HikariDataSource();
+        hikari.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database);
+        hikari.setUsername(username);
+        hikari.setPassword(password);
 
-    public MySQL(String host, String database, String username, String password, int port){
-        this.host = host;
-        this.database = database;
-        this.username = username;
-        this.password = password;
-        this.port = port;
-    }
+        try {
+            Connection connection = getConnection();
+            try (PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS `players` (" +
+                    "`uuid` CHAR(36) NOT NULL," +
+                    "`playtime` INT NOT NULL," +
+                    "`last_played` DATE NOT NULL," +
+                    "PRIMARY KEY(`uuid`)" +
+                    ");")) {
 
-    public Connection getConnection() throws SQLException, ClassNotFoundException {
-        if (connection != null && !connection.isClosed()) {
-            return connection;
-        }
-
-        synchronized (this) {
-            if (connection != null && !connection.isClosed()) {
-                return connection;
+                statement.execute();
             }
-            Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database, this.username, this.password);
-            return connection;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
+    @Override
+    public Connection getConnection() throws SQLException {
+        if (hikari == null) {
+            return null;
+        }
+        Connection connection = hikari.getConnection();
+        if (connection == null || connection.isClosed()) {
+            return null;
+        }
+        return connection;
+    }
+
+    @Override
     public void savePlayer(PlaytimePlayer player) {
         try {
             Connection connection = getConnection();
 
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO players (uuid,playtime,last_played) VALUES (?,?,?) ON DUPLICATE KEY UPDATE playtime=?,last_played=?;");
-            statement.setObject(1, player.getUUID());
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO `players` (`uuid`,`playtime`,`last_played`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `playtime`=?,`last_played`=?;");
+            statement.setString(1, player.getUUID().toString());
             statement.setInt(2, player.getPlaytime());
             statement.setDate(3, Date.valueOf(player.getLastLogin()));
             statement.setInt(4, player.getPlaytime());
@@ -58,6 +65,12 @@ public class MySQL implements Database {
         }
     }
 
+    @Override
+    public void savePlayers(List<PlaytimePlayer> players) {
+
+    }
+
+    @Override
     public PlaytimePlayer loadPlayer(UUID uuid) {
         try {
             Connection connection = getConnection();
@@ -69,8 +82,8 @@ public class MySQL implements Database {
             PlaytimePlayer playtimePlayer = null;
             if (result.next()) {
                 Integer playtime = result.getInt("playtime");
-                //Date lastPlayed = result.getDate("last_played");
-                playtimePlayer = new PlaytimePlayer(uuid, playtime, LocalDate.now());
+                Date lastPlayed = result.getDate("last_played");
+                playtimePlayer = new PlaytimePlayer(uuid, playtime, lastPlayed.toLocalDate());
             }
 
             result.close();
@@ -84,4 +97,15 @@ public class MySQL implements Database {
         }
     }
 
+    @Override
+    public List<PlaytimePlayer> loadPlayers(List<UUID> uuids) {
+        return null;
+    }
+
+    @Override
+    public void shutdown() {
+        if (hikari != null) {
+            hikari.close();
+        }
+    }
 }
