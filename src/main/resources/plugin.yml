@@ -2,3 +2,9 @@ author: Tobiplayer3
 main: com.tobiplayer3.limitedplaytime.LimitedPlaytime
 version: 2.0
 name: LimitedPlaytime
+
+commands:
+  playtime:
+    usage: /playtime
+    description: Display your playtime!
+    aliases: [pt,ptime]
