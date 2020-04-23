@@ -120,9 +120,15 @@ public class PlaytimeManager {
     }
 
     public void unloadPlayers(List<PlaytimePlayer> playtimePlayers){
-        limitedPlaytime.getDatabase().savePlayers(players);
-        for(PlaytimePlayer playtimePlayer : playtimePlayers){
-            players.remove(playtimePlayer);
+        synchronized (playtimePlayers) {
+            limitedPlaytime.getDatabase().savePlayers(playtimePlayers);
+
+            Iterator<PlaytimePlayer> playerIterator = players.iterator();
+            while(playerIterator.hasNext()){
+                if(playtimePlayers.contains(playerIterator.next())) {
+                    playerIterator.remove();
+                }
+            }
         }
     }
 
