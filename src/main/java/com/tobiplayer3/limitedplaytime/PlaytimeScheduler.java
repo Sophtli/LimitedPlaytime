@@ -4,24 +4,39 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.UUID;
+
 public class PlaytimeScheduler extends BukkitRunnable {
 
     private PlaytimeManager playtimeManager = PlaytimeManager.getManager();
+    private LimitedPlaytime limitedPlaytime = LimitedPlaytime.getInstance();
 
     public void run() {
 
-        // synchronous task to access bukkit api
         new BukkitRunnable() {
+            @Override
             public void run() {
 
                 for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (!playtimeManager.isLoaded(player.getUniqueId())) {
+                        continue;
+                    }
                     PlaytimePlayer playtimePlayer = playtimeManager.getPlayer(player.getUniqueId());
-                    playtimePlayer.setPlaytime(playtimePlayer.getPlaytime() - 1);
-                    player.sendMessage(playtimePlayer.getPlaytime().toString());
-                }
 
+                    int newPlaytime = playtimePlayer.getPlaytime() - 1;
+                    playtimePlayer.setPlaytime(newPlaytime);
+
+                    if (playtimeManager.isNotifyStep(newPlaytime)) {
+                        player.sendMessage(Integer.toString(playtimePlayer.getPlaytime() / 20));
+                    }
+
+                    if (newPlaytime <= 0) {
+                        player.kickPlayer("test!");
+                    }
+                }
+                
             }
-        }.runTask(LimitedPlaytime.getInstance());
+        }.runTask(limitedPlaytime);
 
     }
 

@@ -1,5 +1,8 @@
 package com.tobiplayer3.limitedplaytime;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -17,7 +20,7 @@ public class MessageManager {
 
     private Map<Message, String> messages;
 
-    public static MessageManager getMessageManager() {
+    public static MessageManager getManager() {
         if (messageManager == null) {
             messageManager = new MessageManager();
         }
@@ -32,8 +35,20 @@ public class MessageManager {
         messages = Collections.unmodifiableMap(loadedMessages);
     }
 
-    public String getMessage(Message message){
-        return messages.get(message);
+    public String getMessage(Message message, PlaytimePlayer playtimePlayer){
+        String m = ChatColor.translateAlternateColorCodes('&', messages.get(message));
+
+        int totalSeconds = playtimePlayer.getPlaytime() / 20;
+
+        int hours = totalSeconds / 3600;
+        int minutes = (totalSeconds % 3600) / 60;
+        int seconds = totalSeconds % 60;
+
+        if(message == Message.TIME){
+            return m.replaceAll("%h%", Integer.toString(hours)).replaceAll("%m%", Integer.toString(minutes)).replaceAll("%s%", Integer.toString(seconds));
+        }
+
+        return m.replaceAll("%time%", getMessage(Message.TIME, playtimePlayer));
     }
 
 }

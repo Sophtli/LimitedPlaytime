@@ -1,3 +1,55 @@
+### 20 ticks = 1 second
+
+# mysql connection details
+# enabled: false -> use sqlite
+mysql:
+  enabled: false
+  host: ""
+  database: ""
+  username: ""
+  password: ""
+  port: 3306
+
+# saves the data to the database every x ticks
+# default: 12000 (10 minutes)
+autosave_interval: 1200
+
+# maximum playtime per day in ticks
+# if a player has no permission in the below defined list his maximum playtime will fallback to default_playtime
 default_playtime: 7200
-rank_playtime:
-  example: 2400
+# set the maximum playtime from player permission
+# the highest value will be used if a player has multiple permissions
+permission_playtime:
+  - example.example: 2400
+
+# define at which remaining ticks of playtime the player should be notified
+notify_steps:
+  - 20
+  - 40
+  - 60
+  - 80
+  - 100
+  - 120
+  - 140
+  - 160
+  - 180
+  - 200
+  - 300
+  - 600
+  - 1200
+
+# enable to allow players to carry over their remaining playtime to the next day
+stack_playtime: false
+
+# permissions, leave an entry empty to allow for everyone
+# permission that allows you to view your own playtime
+view_playtime_permission: ""
+# permission that allows you to view other people's playtime
+view_others_playtime_permission: "limitedplaytime.viewothers"
+# permission that allows to change the remaining playtime of any player
+edit_playtime_permission: "limitedplaytime.edit"
+
+# define language file
+# ./lang folder contains all language files, enter the name of the file, without '.yml', that you want to use
+# create a {name}.yml file in ./lang folder and put {name} in here to use custom translations/messages
+language: "en"
