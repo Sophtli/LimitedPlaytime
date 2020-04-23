@@ -13,9 +13,10 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LimitedPlaytime extends JavaPlugin {
@@ -44,11 +45,8 @@ public class LimitedPlaytime extends JavaPlugin {
         playtimeManager = PlaytimeManager.getManager();
         messageManager = MessageManager.getManager();
 
-        try {
-            loadConfig();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        loadConfig();
+
         registerEvents();
         registerCommands();
 
@@ -58,12 +56,14 @@ public class LimitedPlaytime extends JavaPlugin {
 
         getLogger().info("LimitedPlaytime loaded successfuly.");
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            playtimeManager.loadPlayer(p.getUniqueId());
+        List<UUID> players = new ArrayList<>();
+        for(Player p : Bukkit.getOnlinePlayers()){
+            players.add(p.getUniqueId());
         }
+        playtimeManager.loadPlayers(players);
     }
 
-    private void loadConfig() throws IOException {
+    private void loadConfig() {
         saveDefaultConfig();
 
         boolean mysqlEnabled = getConfig().getBoolean("mysql.enabled", false);
@@ -89,8 +89,8 @@ public class LimitedPlaytime extends JavaPlugin {
         List<Map<?, ?>> maxPlaytimeList = getConfig().getMapList("permission_playtime");
         for(Map<?, ?> map : maxPlaytimeList){
             Map<String, Integer> permissionMap = (Map<String, Integer>) map;
-            for(String permission : permissionMap.keySet()){
-                maxPlaytimes.put(permission, permissionMap.get(permission));
+            for(Map.Entry<String, Integer> permission : permissionMap.entrySet()){
+                maxPlaytimes.put(permission.getKey(), permission.getValue());
             }
         }
         playtimeManager.setMaxPlaytimes(maxPlaytimes);
@@ -103,8 +103,8 @@ public class LimitedPlaytime extends JavaPlugin {
         new File(getDataFolder() + "/lang").mkdirs();
 
         String[] languages = {"en", "de"};
-        for (String language : languages) {
-            saveResource("lang/" + language + ".yml", true);
+        for (String lang : languages) {
+            saveResource("lang/" + lang + ".yml", true);
         }
 
         messageManager.loadMessages();
@@ -137,7 +137,7 @@ public class LimitedPlaytime extends JavaPlugin {
     public void onDisable() {
         getLogger().info("LimitedPlaytime unloading...");
 
-        database.savePlayers(playtimeManager.getPlayers());
+        playtimeManager.unloadPlayers(playtimeManager.getPlayers());
 
         getLogger().info("LimitedPlaytime unloaded successfuly.");
     }

@@ -42,7 +42,7 @@ public class PlaytimeManager {
     public PlaytimePlayer loadPlayer(UUID uuid) {
         PlaytimePlayer playtimePlayer = limitedPlaytime.getDatabase().loadPlayer(uuid);
         if (playtimePlayer == null) {
-            return null;
+            registerPlayer(uuid, getMaxPlaytime(uuid), LocalDate.now());
         }
         players.add(playtimePlayer);
         return playtimePlayer;
@@ -117,5 +117,20 @@ public class PlaytimeManager {
             return true;
         }
         return false;
+    }
+
+    public void unloadPlayers(List<PlaytimePlayer> playtimePlayers){
+        limitedPlaytime.getDatabase().savePlayers(players);
+        for(PlaytimePlayer playtimePlayer : playtimePlayers){
+            players.remove(playtimePlayer);
+        }
+    }
+
+    public List<PlaytimePlayer> loadPlayers(List<UUID> playtimePlayers){
+        List<PlaytimePlayer> loadedPlaytimePlayer = limitedPlaytime.getDatabase().loadPlayers(playtimePlayers);
+        for(PlaytimePlayer playtimePlayer : loadedPlaytimePlayer){
+            players.add(playtimePlayer);
+        }
+        return loadedPlaytimePlayer;
     }
 }
