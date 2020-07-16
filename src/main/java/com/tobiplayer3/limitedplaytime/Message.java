@@ -10,7 +10,7 @@ public enum Message {
     PLAYTIME_COMMAND_ERROR(""),
     PLAYTIME_EDIT_COMMAND("");
 
-    private String def;
+    private final String def;
 
     Message(String def){
         this.def = def;

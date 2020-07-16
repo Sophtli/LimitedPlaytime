@@ -9,17 +9,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class QuitListener implements Listener {
 
-    private PlaytimeManager playtimeManager = PlaytimeManager.getManager();
-    private LimitedPlaytime limitedPlaytime = LimitedPlaytime.getInstance();
+    private final PlaytimeManager playtimeManager = PlaytimeManager.getManager();
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e){
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                playtimeManager.unloadPlayer(e.getPlayer().getUniqueId());
-            }
-        }.runTaskAsynchronously(limitedPlaytime);
+        playtimeManager.unloadPlayer(e.getPlayer().getUniqueId());
     }
 
 }

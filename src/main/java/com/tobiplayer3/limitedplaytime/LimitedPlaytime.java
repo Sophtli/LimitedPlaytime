@@ -7,17 +7,16 @@ import com.tobiplayer3.limitedplaytime.database.MySQL;
 import com.tobiplayer3.limitedplaytime.database.SQLite;
 import com.tobiplayer3.limitedplaytime.listeners.JoinListener;
 import com.tobiplayer3.limitedplaytime.listeners.QuitListener;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class LimitedPlaytime extends JavaPlugin {
 
@@ -33,6 +32,8 @@ public class LimitedPlaytime extends JavaPlugin {
     private String viewPlaytimePermission;
     private String viewOthersPlaytimePermission;
     private String editPlaytimePermission;
+
+    public static final String PREFIX = "[LimitedPlaytime]";
 
     @Override
     public void onEnable() {
@@ -54,13 +55,15 @@ public class LimitedPlaytime extends JavaPlugin {
         // save to database every autoSaveInterval seconds
         new DatabaseScheduler().runTaskTimerAsynchronously(this, 0, autoSaveInterval);
 
-        getLogger().info("LimitedPlaytime loaded successfuly.");
-
-        List<UUID> players = new ArrayList<>();
         for(Player p : Bukkit.getOnlinePlayers()){
-            players.add(p.getUniqueId());
+            playtimeManager.loadPlayer(p.getUniqueId());
         }
-        playtimeManager.loadPlayers(players);
+
+        // bStats Metrics
+        int pluginID = 7974; // <-- Replace with the id of your plugin!
+        Metrics metrics = new Metrics(this, pluginID);
+
+        getLogger().info("LimitedPlaytime loaded successfuly.");
     }
 
     private void loadConfig() {
@@ -84,13 +87,13 @@ public class LimitedPlaytime extends JavaPlugin {
         playtimeManager.setPlaytimeStacking(getConfig().getBoolean("stack_playtime", false));
         playtimeManager.setDefaultMaxPlaytime(getConfig().getInt("default_playtime"));
 
-        Map<String, Integer> maxPlaytimes = new ConcurrentHashMap<>();
+        Map<String, Integer> maxPlaytimes = new HashMap<>();
 
         List<Map<?, ?>> maxPlaytimeList = getConfig().getMapList("permission_playtime");
         for(Map<?, ?> map : maxPlaytimeList){
-            Map<String, Integer> permissionMap = (Map<String, Integer>) map;
-            for(Map.Entry<String, Integer> permission : permissionMap.entrySet()){
-                maxPlaytimes.put(permission.getKey(), permission.getValue());
+            for(Map.Entry<?, ?> permission : map.entrySet()){
+                if(!(permission.getKey() instanceof String) || !(permission.getValue() instanceof Integer)) continue;
+                maxPlaytimes.put((String) permission.getKey(), (Integer) permission.getValue());
             }
         }
         playtimeManager.setMaxPlaytimes(maxPlaytimes);
@@ -121,7 +124,7 @@ public class LimitedPlaytime extends JavaPlugin {
         getCommand("playtime").setTabCompleter(new PlaytimeCommand());
     }
 
-    public Database getDatabase() {
+    public Database getDB() {
         return database;
     }
 
@@ -137,7 +140,10 @@ public class LimitedPlaytime extends JavaPlugin {
     public void onDisable() {
         getLogger().info("LimitedPlaytime unloading...");
 
-        playtimeManager.unloadPlayers(playtimeManager.getPlayers());
+        for(Player p : Bukkit.getOnlinePlayers()){
+            playtimeManager.unloadPlayer(p.getUniqueId());
+        }
+        database.shutdown();
 
         getLogger().info("LimitedPlaytime unloaded successfuly.");
     }
