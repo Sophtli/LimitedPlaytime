@@ -46,7 +46,7 @@ public class PlaytimeManager {
      * otherwise this will make a database call
      *
      * @param uuid A player
-     * @return
+     * @return CompletableFutute
      */
     @NotNull
     public CompletableFuture<Playtime> getPlaytime(UUID uuid) {

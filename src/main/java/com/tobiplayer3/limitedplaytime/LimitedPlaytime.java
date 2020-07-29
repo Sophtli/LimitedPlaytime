@@ -7,6 +7,7 @@ import com.tobiplayer3.limitedplaytime.database.MySQL;
 import com.tobiplayer3.limitedplaytime.database.SQLite;
 import com.tobiplayer3.limitedplaytime.listeners.JoinListener;
 import com.tobiplayer3.limitedplaytime.listeners.QuitListener;
+import kr.entree.spigradle.annotations.PluginMain;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@PluginMain
 public class LimitedPlaytime extends JavaPlugin {
 
     private static LimitedPlaytime instance;

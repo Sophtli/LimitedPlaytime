@@ -1,6 +1,5 @@
 package com.tobiplayer3.limitedplaytime;
 
-import com.connorlinfoot.actionbarapi.ActionBarAPI;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;
@@ -35,7 +34,7 @@ public class PlaytimeScheduler extends BukkitRunnable {
                         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(messageManager.getMessage(Message.TIME_SHORT, playtime)));
                     }else{
                         if (Bukkit.getPluginManager().isPluginEnabled("ActionBarAPI")) {
-                            ActionBarAPI.sendActionBar(player, messageManager.getMessage(Message.TIME_SHORT, playtime));
+                            //ActionBarAPI.sendActionBar(player, messageManager.getMessage(Message.TIME_SHORT, playtime));
                         }
                     }
 

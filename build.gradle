@@ -1,0 +1,57 @@
+plugins {
+    id 'java'
+    id "com.github.johnrengelman.shadow" version "6.0.0"
+    id 'kr.entree.spigradle' version '2.1.1'
+}
+
+group = 'com.tobiplayer3'
+version = '2.0-SNAPSHOT'
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+    jcenter()
+
+    spigot()
+    bStats()
+    jitpack()
+}
+
+dependencies {
+    implementation 'com.zaxxer:HikariCP:3.4.5'
+    implementation bStats()
+    //implementation 'com.github.connorlinfoot:ActionBarAPI:5b2d642'
+    compileOnly spigot()
+    compileOnly 'com.intellij:annotations:12.0'
+}
+
+shadowJar {
+    minimize()
+    classifier('')
+    relocate 'org.bstats', 'com.tobiplayer3.limitedplaytime'
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+tasks.assemble.dependsOn(shadowJar)
+
+spigot {
+    authors 'Tobiplayer3'
+    commands {
+        playtime {
+            aliases = ['pt', 'ptime']
+            description = 'Display your playtime!'
+            usage = '/playtime'
+        }
+    }
+    /*permissions {
+        'test.foo' {
+            description = 'Allows foo command'
+            defaults = 'op'
+        }
+    }*/
+}
