@@ -6,8 +6,14 @@ plugins {
 
 group = 'com.tobiplayer3'
 version = '2.0-SNAPSHOT'
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    withJavadocJar()
+    withSourcesJar()
+}
 
 repositories {
     mavenCentral()
@@ -30,11 +36,6 @@ shadowJar {
     minimize()
     classifier('')
     relocate 'org.bstats', 'com.tobiplayer3.limitedplaytime'
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
 }
 
 tasks.assemble.dependsOn(shadowJar)

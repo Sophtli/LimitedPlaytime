@@ -82,7 +82,7 @@ public class SQLite implements Database {
                     if (result.next()) {
                         Integer playtime = result.getInt("playtime");
                         String lastPlayed = result.getString("last_played");
-                        completableFuture.complete(new Playtime(playtime, LocalDate.parse(lastPlayed, DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
+                        completableFuture.complete(new Playtime(uuid, playtime, LocalDate.parse(lastPlayed, DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
                     }
                     completableFuture.completeExceptionally(new PlaytimeNotSavedException("The player does not exist in the database"));
                 }

@@ -89,7 +89,7 @@ public class MySQL implements Database {
                         Integer timeRemaining = result.getInt("playtime");
                         Date lastPlayed = result.getDate("last_played");
 
-                        Playtime playtime = new Playtime(timeRemaining, lastPlayed.toLocalDate());
+                        Playtime playtime = new Playtime(uuid, timeRemaining, lastPlayed.toLocalDate());
                         completableFuture.complete(playtime);
                     }
                     completableFuture.completeExceptionally(new PlaytimeNotSavedException("The player does not exist in the database"));

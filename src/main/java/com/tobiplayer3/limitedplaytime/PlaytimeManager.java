@@ -1,14 +1,16 @@
 package com.tobiplayer3.limitedplaytime;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.NotNull;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -104,14 +106,14 @@ public class PlaytimeManager {
 
     @NotNull
     public Playtime createPlayer(UUID uuid) {
-        Playtime playtime = new Playtime(getMaxPlaytime(uuid), LocalDate.now());
+        Playtime playtime = new Playtime(uuid, getMaxPlaytime(uuid), LocalDate.now());
         playtimes.put(uuid, playtime);
         return playtime;
     }
 
     @NotNull
     public Playtime createPlayer(UUID uuid, int maxPlaytime) {
-        Playtime playtime = new Playtime(maxPlaytime, LocalDate.now());
+        Playtime playtime = new Playtime(uuid, maxPlaytime, LocalDate.now());
         playtimes.put(uuid, playtime);
         return playtime;
     }
