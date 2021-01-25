@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.zaxxer:HikariCP:3.4.5'
+    implementation 'com.zaxxer:HikariCP:4.0.0'
     implementation bStats()
     //implementation 'com.github.connorlinfoot:ActionBarAPI:5b2d642'
     compileOnly spigot()
