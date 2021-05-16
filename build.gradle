@@ -41,6 +41,10 @@ shadowJar {
 tasks.assemble.dependsOn(shadowJar)
 
 spigot {
+    debug {
+        buildVersion = "1.16.5"
+    }
+
     authors 'Tobiplayer3'
     commands {
         playtime {

@@ -11,6 +11,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,21 +19,29 @@ import java.util.stream.Collectors;
 
 public class PlaytimeCommand implements CommandExecutor, TabCompleter {
 
-    private final PlaytimeManager playtimeManager = PlaytimeManager.getManager();
-    private final LimitedPlaytime limitedPlaytime = LimitedPlaytime.getInstance();
-    private final MessageManager messageManager = MessageManager.getManager();
+    private final PlaytimeManager playtimeManager;
+    private final MessageManager messageManager;
+    private final PlaytimeConfig playtimeConfig;
+    private final Utils utils;
+
+    public PlaytimeCommand(LimitedPlaytime limitedPlaytime) {
+        playtimeManager = limitedPlaytime.getPlaytimeManager();
+        messageManager = limitedPlaytime.getMessageManager();
+        playtimeConfig = limitedPlaytime.getPlaytimeConfig();
+        utils = limitedPlaytime.getUtils();
+    }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        Utils.runAsync(() -> {
+    public boolean onCommand(@NotNull CommandSender cs, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
+        utils.runAsync(() -> {
             if (!(cs instanceof Player)) {
                 return;
             }
             Player p = (Player) cs;
 
-            if (!p.hasPermission(limitedPlaytime.getViewPlaytimePermission())
-                    && !p.hasPermission(limitedPlaytime.getViewOthersPlaytimePermission())
-                    && !p.hasPermission(limitedPlaytime.getEditPlaytimePermission())) {
+            if (!p.hasPermission(playtimeConfig.getViewPlaytimePermission())
+                    && !p.hasPermission(playtimeConfig.getViewOthersPlaytimePermission())
+                    && !p.hasPermission(playtimeConfig.getEditPlaytimePermission())) {
                 return;
             }
 
@@ -54,7 +63,7 @@ public class PlaytimeCommand implements CommandExecutor, TabCompleter {
             }
 
             if (args.length == 4) {
-                if(action.equalsIgnoreCase("set")){
+                if (action.equalsIgnoreCase("set")) {
                     setPlaytime(p, args);
                     return;
                 }
@@ -75,7 +84,7 @@ public class PlaytimeCommand implements CommandExecutor, TabCompleter {
                     case "remove":
                     case "reset":
                     default:
-                        OfflinePlayer target = Utils.getOfflinePlayer(args[0]).join();
+                        OfflinePlayer target = utils.getOfflinePlayer(args[0]).join();
                         playtimeManager.getPlaytime(target.getUniqueId())
                                 .thenAccept(playtime -> p.spigot().sendMessage(new TextComponent(Integer.toString(playtime.getTimeRemaining()))))
                                 .exceptionally(exception -> {
@@ -114,14 +123,14 @@ public class PlaytimeCommand implements CommandExecutor, TabCompleter {
         List<String> l = new ArrayList<>();
 
         if (args.length == 1) {
-            if (p.hasPermission(limitedPlaytime.getEditPlaytimePermission())) {
+            if (p.hasPermission(playtimeConfig.getEditPlaytimePermission())) {
                 l.add("set");
                 l.add("add");
                 l.add("remove");
                 l.add("reset");
             }
-            if (p.hasPermission(limitedPlaytime.getViewOthersPlaytimePermission())
-                    || p.hasPermission(limitedPlaytime.getEditPlaytimePermission())) {
+            if (p.hasPermission(playtimeConfig.getViewOthersPlaytimePermission())
+                    || p.hasPermission(playtimeConfig.getEditPlaytimePermission())) {
                 l.addAll(Bukkit.getOnlinePlayers().stream().filter(player -> player != p).map(HumanEntity::getName).collect(Collectors.toList()));
             }
             return l.stream().filter(s -> StringUtil.startsWithIgnoreCase(s, args[0])).collect(Collectors.toList());
@@ -131,7 +140,7 @@ public class PlaytimeCommand implements CommandExecutor, TabCompleter {
             if (!args[0].equalsIgnoreCase("set") && !args[0].equalsIgnoreCase("add") && !args[0].equalsIgnoreCase("remove")) {
                 return new ArrayList<>();
             }
-            if (p.hasPermission(limitedPlaytime.getEditPlaytimePermission())) {
+            if (p.hasPermission(playtimeConfig.getEditPlaytimePermission())) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (player == p) {
                         continue;

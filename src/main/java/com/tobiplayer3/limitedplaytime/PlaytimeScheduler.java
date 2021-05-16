@@ -6,15 +6,20 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.StringUtil;
-
-import java.time.LocalTime;
 
 public class PlaytimeScheduler extends BukkitRunnable {
 
-    private final PlaytimeManager playtimeManager = PlaytimeManager.getManager();
-    private final LimitedPlaytime limitedPlaytime = LimitedPlaytime.getInstance();
-    private final MessageManager messageManager = MessageManager.getManager();
+    private final LimitedPlaytime limitedPlaytime;
+    private final PlaytimeManager playtimeManager;
+    private final MessageManager messageManager;
+    private final Utils utils;
+
+    public PlaytimeScheduler(LimitedPlaytime limitedPlaytime) {
+        this.limitedPlaytime = limitedPlaytime;
+        playtimeManager = limitedPlaytime.getPlaytimeManager();
+        messageManager = limitedPlaytime.getMessageManager();
+        utils = limitedPlaytime.getUtils();
+    }
 
     public void run() {
 
@@ -43,7 +48,7 @@ public class PlaytimeScheduler extends BukkitRunnable {
                     }
 
                     if (newPlaytime <= 0) {
-                        Utils.runSync(() -> player.kickPlayer("test!"));
+                        utils.runSync(() -> player.kickPlayer("test!"));
                     }
                 }
 

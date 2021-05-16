@@ -4,14 +4,17 @@ import com.tobiplayer3.limitedplaytime.Playtime;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public interface Database {
-
     Connection getConnection() throws SQLException;
-    CompletableFuture<Void> savePlayer(UUID uuid, Playtime playtime);
-    CompletableFuture<Playtime> loadPlayer(UUID uuid);
-    void shutdown();
 
+    CompletableFuture<Void> savePlayer(Playtime playtime);
+
+    CompletableFuture<Void> savePlayers(Collection<Playtime> playtimes);
+
+    CompletableFuture<Playtime> loadPlayer(UUID uuid);
+
+    void shutdown();
 }

@@ -1,5 +1,6 @@
 package com.tobiplayer3.limitedplaytime.listeners;
 
+import com.tobiplayer3.limitedplaytime.LimitedPlaytime;
 import com.tobiplayer3.limitedplaytime.Playtime;
 import com.tobiplayer3.limitedplaytime.PlaytimeManager;
 import org.bukkit.entity.Player;
@@ -13,7 +14,11 @@ import java.util.UUID;
 
 public class JoinListener implements Listener {
 
-    private final PlaytimeManager playtimeManager = PlaytimeManager.getManager();
+    private final PlaytimeManager playtimeManager;
+
+    public JoinListener(LimitedPlaytime limitedPlaytime) {
+        playtimeManager = limitedPlaytime.getPlaytimeManager();
+    }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {

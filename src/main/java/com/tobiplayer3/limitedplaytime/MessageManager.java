@@ -11,18 +11,11 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public class MessageManager {
-
-    private static MessageManager messageManager;
-    private final LimitedPlaytime limitedPlaytime = LimitedPlaytime.getInstance();
-    private final FileConfiguration messageConfig = YamlConfiguration.loadConfiguration(new File(limitedPlaytime.getDataFolder(), limitedPlaytime.getLanguage() + ".yml"));
-
+    private final FileConfiguration messageConfig;
     private ImmutableMap<Message, String> messages;
 
-    public static MessageManager getManager() {
-        if (messageManager == null) {
-            messageManager = new MessageManager();
-        }
-        return messageManager;
+    public MessageManager(LimitedPlaytime limitedPlaytime) {
+        messageConfig = YamlConfiguration.loadConfiguration(new File(limitedPlaytime.getDataFolder(), limitedPlaytime.getPlaytimeConfig().getLanguage() + ".yml"));
     }
 
     public void loadMessages() {
@@ -45,7 +38,7 @@ public class MessageManager {
                 .replace("%time_short%", getMessage(Message.TIME_SHORT, playtime));
     }
 
-    public String formatTime(int ticks, String format){
+    public String formatTime(int ticks, String format) {
         int totalSeconds = ticks / 20;
 
         int hours = totalSeconds / 3600;

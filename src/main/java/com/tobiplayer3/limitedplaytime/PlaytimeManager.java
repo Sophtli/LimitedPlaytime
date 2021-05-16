@@ -7,17 +7,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlaytimeManager {
-
-    private static PlaytimeManager manager;
-    private final LimitedPlaytime limitedPlaytime = LimitedPlaytime.getInstance();
+    private final LimitedPlaytime limitedPlaytime;
 
     private boolean playtimeStacking;
 
@@ -27,13 +22,9 @@ public class PlaytimeManager {
     private ImmutableMap<String, Integer> maxPlaytimes;
     private List<Integer> notifySteps;
 
-    public static PlaytimeManager getManager() {
-        if (manager == null) {
-            manager = new PlaytimeManager();
-        }
-        return manager;
+    public PlaytimeManager(LimitedPlaytime limitedPlaytime) {
+        this.limitedPlaytime = limitedPlaytime;
     }
-
     public boolean isPlaytimeCached(UUID uuid) {
         return playtimes.containsKey(uuid);
     }
@@ -130,12 +121,26 @@ public class PlaytimeManager {
             return completableFuture;
         }
 
-        limitedPlaytime.getDB().savePlayer(uuid, playtime)
+        limitedPlaytime.getDB().savePlayer(playtime)
                 .thenRunAsync(() -> completableFuture.complete(null))
                 .exceptionally(exception -> {
                     completableFuture.completeExceptionally(exception);
                     return null;
                 });
+
+        return completableFuture;
+    }
+
+    public CompletableFuture<Void> unloadPlayers() {
+        CompletableFuture<Void> completableFuture = new CompletableFuture<>();
+
+        limitedPlaytime.getDB().savePlayers(new ArrayList<>(playtimes.values()))
+                .thenRunAsync(() -> completableFuture.complete(null))
+                .exceptionally(exception -> {
+                    completableFuture.completeExceptionally(exception);
+                    return null;
+                });
+        playtimes.clear();
 
         return completableFuture;
     }
@@ -180,9 +185,6 @@ public class PlaytimeManager {
     }
 
     public boolean isNotifyStep(Integer tick) {
-        if (notifySteps.contains(tick)) {
-            return true;
-        }
-        return false;
+        return notifySteps.contains(tick);
     }
 }

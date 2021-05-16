@@ -1,25 +1,22 @@
 package com.tobiplayer3.limitedplaytime.database;
 
 import com.tobiplayer3.limitedplaytime.LimitedPlaytime;
-import com.tobiplayer3.limitedplaytime.Playtime;
 import com.tobiplayer3.limitedplaytime.PlaytimeManager;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.ArrayList;
 
 public class DatabaseScheduler extends BukkitRunnable {
+    private final LimitedPlaytime limitedPlaytime;
+    private final PlaytimeManager playtimeManager;
 
-    private final PlaytimeManager playtimeManager = PlaytimeManager.getManager();
-    private final LimitedPlaytime limitedPlaytime = LimitedPlaytime.getInstance();
+    public DatabaseScheduler(LimitedPlaytime limitedPlaytime) {
+        this.limitedPlaytime = limitedPlaytime;
+        this.playtimeManager = limitedPlaytime.getPlaytimeManager();
+    }
 
     @Override
     public void run() {
-
-        for (Map.Entry<UUID, Playtime> playtimeEntry : playtimeManager.getPlaytimes().entrySet()) {
-            limitedPlaytime.getDB().savePlayer(playtimeEntry.getKey(), playtimeEntry.getValue());
-        }
-
+        limitedPlaytime.getDB().savePlayers(new ArrayList<>(playtimeManager.getPlaytimes().values()));
     }
-
 }

@@ -1,14 +1,13 @@
 package com.tobiplayer3.limitedplaytime.events;
 
-import com.tobiplayer3.limitedplaytime.Playtime;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public class PlaytimeChangeEvent extends Event implements Cancellable {
-
     private static final HandlerList HANDLERS_LIST = new HandlerList();
     private boolean cancelled;
 
@@ -23,6 +22,7 @@ public class PlaytimeChangeEvent extends Event implements Cancellable {
     }
 
     @Override
+    @NotNull
     public HandlerList getHandlers() {
         return HANDLERS_LIST;
     }

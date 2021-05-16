@@ -7,12 +7,11 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public class Playtime {
-
     private final UUID uuid;
     private Integer timeRemaining;
     private LocalDate lastLogin;
 
-    public Playtime(UUID uuid, Integer playtime, LocalDate lastLogin){
+    public Playtime(UUID uuid, Integer playtime, LocalDate lastLogin) {
         this.uuid = uuid;
         this.timeRemaining = playtime;
         this.lastLogin = lastLogin;
@@ -33,7 +32,7 @@ public class Playtime {
     public void setTimeRemaining(Integer timeRemaining) {
         PlaytimeChangeEvent playtimeChangeEvent = new PlaytimeChangeEvent(uuid, timeRemaining, this.timeRemaining);
         Bukkit.getPluginManager().callEvent(playtimeChangeEvent);
-        if(playtimeChangeEvent.isCancelled()) return;
+        if (playtimeChangeEvent.isCancelled()) return;
 
         this.timeRemaining = playtimeChangeEvent.getNewPlaytime();
     }

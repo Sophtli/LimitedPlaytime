@@ -1,7 +1,7 @@
 ### 20 ticks = 1 second
 
 # mysql connection details
-# enabled: false -> use sqlite
+# enabled: false -> fallback to sqlite (local file database)
 mysql:
   enabled: false
   host: ""
@@ -19,7 +19,7 @@ autosave_interval: 1200
 default_playtime: 7200
 # set the maximum playtime from player permission
 # the highest value will be used if a player has multiple permissions
-permission_playtime:
+playtime:
   - example.example: 2400
 
 # define at which remaining ticks of playtime the player should be notified
