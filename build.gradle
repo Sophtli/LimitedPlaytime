@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id "com.github.johnrengelman.shadow" version "7.0.0"
-    id 'kr.entree.spigradle' version '2.2.3'
+    id 'kr.entree.spigradle' version '2.3.3'
 }
 
 group = 'com.tobiplayer3'
