@@ -7,6 +7,11 @@ plugins {
 group = 'li.sopht'
 version = '2.0-SNAPSHOT'
 
+buildScan {
+    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    termsOfServiceAgree = "yes"
+}
+
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
