@@ -2,12 +2,10 @@ package li.sopht.limitedplaytime;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -58,7 +56,7 @@ public class Utils {
     }
 
     public void sendActionBarMessage(Player player, String message) {
-        if (!StringUtils.containsIgnoreCase(Bukkit.getVersion(), "1.8") && !StringUtils.containsIgnoreCase(Bukkit.getVersion(), "1.9")) {
+        if (!Bukkit.getVersion().contains("1.8") && !Bukkit.getVersion().contains("1.9")) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
         } else {
             if (Bukkit.getPluginManager().isPluginEnabled("ActionBarAPI")) {

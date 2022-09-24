@@ -1,7 +1,6 @@
 package li.sopht.limitedplaytime;
 
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -45,9 +44,9 @@ public class MessageManager {
         return format.replace("%h%", Integer.toString(hours))
                 .replace("%m%", Integer.toString(minutes))
                 .replace("%s%", Integer.toString(seconds))
-                .replace("%hh%", StringUtils.leftPad(Integer.toString(hours), 2, '0'))
-                .replace("%mm%", StringUtils.leftPad(Integer.toString(minutes), 2, '0'))
-                .replace("%ss%", StringUtils.leftPad(Integer.toString(seconds), 2, '0'));
+                .replace("%hh%", String.format("%02d", Integer.toString(hours)))
+                .replace("%mm%", String.format("%02d", Integer.toString(minutes)))
+                .replace("%ss%", String.format("%02d", Integer.toString(seconds)));
     }
 
 }

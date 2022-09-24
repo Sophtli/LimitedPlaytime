@@ -1,20 +1,12 @@
 package li.sopht.limitedplaytime.commands;
 
-import li.sopht.limitedplaytime.LimitedPlaytime;
 import li.sopht.limitedplaytime.exceptions.CommandException;
-import li.sopht.limitedplaytime.exceptions.InvalidArgumentTypeException;
-import org.apache.commons.lang3.ArrayUtils;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class Command {
     private final String name;
@@ -56,7 +48,7 @@ public class Command {
         if (args.length >= 1) {
             for (Map.Entry<String, Command> subCommand : subCommands.entrySet()) {
                 if (subCommand.getKey().equalsIgnoreCase(args[0])) {
-                    subCommand.getValue().run(p, ArrayUtils.remove(args, 0));
+                    subCommand.getValue().run(p, Arrays.copyOfRange(args, 1, args.length));
                     return;
                 }
             }
@@ -73,7 +65,7 @@ public class Command {
         if (args.length >= 1) {
             for (Map.Entry<String, Command> subCommand : subCommands.entrySet()) {
                 if (subCommand.getKey().equalsIgnoreCase(args[0])) {
-                    return subCommand.getValue().getAutoCompletions(p, ArrayUtils.remove(args, 0));
+                    return subCommand.getValue().getAutoCompletions(p, Arrays.copyOfRange(args, 1, args.length));
                 }
             }
         }

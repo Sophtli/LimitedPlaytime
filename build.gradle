@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id 'com.github.johnrengelman.shadow' version "7.1.2"
     id 'kr.entree.spigradle' version '2.4.2'
 }
 
@@ -8,7 +8,7 @@ group = 'li.sopht'
 version = '2.0-SNAPSHOT'
 
 buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
     termsOfServiceAgree = "yes"
 }
 
@@ -28,8 +28,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.zaxxer:HikariCP:5.0.1'
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation('com.zaxxer:HikariCP:5.0.1') {
+        exclude group: "org.slf4j", module: "slf4j-api"
+    }
 
     compileOnly 'org.jetbrains:annotations:23.0.0'
     compileOnly 'me.clip:placeholderapi:2.11.2'
@@ -37,15 +38,16 @@ dependencies {
 }
 
 shadowJar {
-    minimize()
-    classifier('')
+    archiveClassifier.set('')
+
+    relocate 'com.zaxxer.hikari', 'li.sopht.limitedplaytime.lib.hikari'
 }
 
 tasks.assemble.dependsOn(shadowJar)
 
 spigot {
     debug {
-        buildVersion = "1.19.2"
+        buildVersion = '1.19.2'
     }
 
     authors 'Sophtli'
