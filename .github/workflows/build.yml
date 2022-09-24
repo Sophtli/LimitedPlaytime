@@ -24,7 +24,7 @@ jobs:
       with:
         gradle-version: current
     - name: Gradle Build
-      run: gradle build
+      run: gradle build --scan
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
