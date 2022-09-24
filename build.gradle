@@ -1,15 +1,15 @@
 plugins {
     id 'java'
-    id "com.github.johnrengelman.shadow" version "7.0.0"
-    id 'kr.entree.spigradle' version '2.2.3'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id 'kr.entree.spigradle' version '2.4.2'
 }
 
-group = 'com.tobiplayer3'
+group = 'li.sopht'
 version = '2.0-SNAPSHOT'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 
     withJavadocJar()
     withSourcesJar()
@@ -17,35 +17,36 @@ java {
 
 repositories {
     mavenCentral()
-    jcenter()
-
-    spigot()
-    bStats()
-    jitpack()
+    maven {
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
 }
 
 dependencies {
-    implementation 'com.zaxxer:HikariCP:4.0.3'
-    implementation bStats()
-    //implementation 'com.github.connorlinfoot:ActionBarAPI:5b2d642'
-    compileOnly spigot()
-    compileOnly 'com.intellij:annotations:12.0'
+    implementation 'com.zaxxer:HikariCP:5.0.1'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'org.jetbrains:annotations:23.0.0'
+
+    compileOnly 'me.clip:placeholderapi:2.11.2'
+    compileOnly spigot('1.19.2')
 }
 
 shadowJar {
     minimize()
     classifier('')
-    relocate 'org.bstats', 'com.tobiplayer3.limitedplaytime'
 }
 
 tasks.assemble.dependsOn(shadowJar)
 
 spigot {
     debug {
-        buildVersion = "1.16.5"
+        buildVersion = "1.19.2"
     }
 
-    authors 'Tobiplayer3'
+    authors 'Sophtli'
+    website 'sopht.li'
+    apiVersion '1.19'
+    softDepends 'PlaceholderAPI'
     commands {
         playtime {
             aliases = ['pt', 'ptime']

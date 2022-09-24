@@ -1,2 +1,2 @@
 # LimitedPlaytime
-![Java CI](https://github.com/Tobiplayer3/LimitedPlaytime/workflows/Java%20CI/badge.svg)
+![Java CI](https://img.shields.io/github/workflow/status/Sophtli/LimitedPlaytime/Java%20CI?style=for-the-badge)
