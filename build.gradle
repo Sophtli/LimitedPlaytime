@@ -13,8 +13,8 @@ buildScan {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_11
 
     withJavadocJar()
     withSourcesJar()
@@ -28,9 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation('com.zaxxer:HikariCP:5.0.1') {
-        exclude group: "org.slf4j", module: "slf4j-api"
-    }
+    implementation 'com.zaxxer:HikariCP:5.0.1'
 
     compileOnly 'org.jetbrains:annotations:23.0.0'
     compileOnly 'me.clip:placeholderapi:2.11.2'
@@ -38,9 +36,11 @@ dependencies {
 }
 
 shadowJar {
-    archiveClassifier.set('')
+    minimize()
+    classifier ''
 
     relocate 'com.zaxxer.hikari', 'li.sopht.limitedplaytime.lib.hikari'
+    relocate 'org.slf4j', 'li.sopht.limitedplaytime.lib.slf4j'
 }
 
 tasks.assemble.dependsOn(shadowJar)
@@ -52,7 +52,7 @@ spigot {
 
     authors 'Sophtli'
     website 'sopht.li'
-    apiVersion '1.19'
+    apiVersion '1.13'
     softDepends 'PlaceholderAPI'
     commands {
         playtime {

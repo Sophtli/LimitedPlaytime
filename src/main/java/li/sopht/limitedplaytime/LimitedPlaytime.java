@@ -154,14 +154,6 @@ public class LimitedPlaytime extends JavaPlugin {
     }
 
     private void registerCommands() {
-        PluginCommand cmd = getCommand("playtime");
-        if (cmd == null) {
-            getLogger().severe("Playtime command could not be registered");
-            return;
-        }
-        cmd.setExecutor(new PlaytimeCommand(this));
-        cmd.setTabCompleter(new PlaytimeCommand(this));
-
         new Command("playtime")
                 .withSubcommand(new Command("set")
                         .setHandler(

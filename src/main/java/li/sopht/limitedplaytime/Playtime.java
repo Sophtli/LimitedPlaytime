@@ -20,19 +20,39 @@ public class Playtime {
         this.lastLogin = lastLogin;
     }
 
+    /**
+     * Gets the date of the last login.
+     *
+     * @return local date of the last login
+     */
     @NotNull
     public LocalDate getLastLogin() {
         return lastLogin;
     }
 
+    /**
+     * Gets the remaining time.
+     *
+     * @return remaining time in ticks
+     */
     public int getTimeRemaining() {
         return timeRemaining;
     }
 
+    /**
+     * Sets the date of the last login.
+     *
+     * @param lastLogin local date of the last login
+     */
     public void setLastLogin(@NotNull LocalDate lastLogin) {
         this.lastLogin = lastLogin;
     }
 
+    /**
+     * Sets the remaining time.
+     *
+     * @param timeRemaining remaining time in ticks
+     */
     public void setTimeRemaining(int timeRemaining) {
         PlaytimeChangeEvent playtimeChangeEvent = new PlaytimeChangeEvent(uuid, timeRemaining, this.timeRemaining);
         Bukkit.getPluginManager().callEvent(playtimeChangeEvent);
@@ -41,6 +61,11 @@ public class Playtime {
         this.timeRemaining = playtimeChangeEvent.getNewPlaytime();
     }
 
+    /**
+     * Gets the uuid of the player that belongs to this playtime.
+     *
+     * @return uuid of the related player
+     */
     @NotNull
     public UUID getUUID() {
         return uuid;

@@ -22,14 +22,17 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender cs, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
-        if (cs instanceof Player p)
+        if (cs instanceof Player) {
+            Player p = (Player) cs;
             commandManager.getCommand(cmd.getName()).run(p, args);
+        }
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender cs, Command cmd, String label, String[] args) {
-        if (cs instanceof Player p) {
+        if (cs instanceof Player) {
+            Player p = (Player) cs;
             int i = args.length - 1;
             List<String> autoCompletions = commandManager.getCommand(cmd.getName()).getAutoCompletions(p, args);
             return StringUtil.copyPartialMatches(args[i], autoCompletions, new ArrayList<>());

@@ -49,10 +49,20 @@ public class PlaytimeConfig {
         this.editPlaytimePermission = editPlaytimePermission;
     }
 
+    /**
+     * Sets the permission that is required to view the remaining playtime of other players.
+     *
+     * @param viewOthersPlaytimePermission the string representing the required permission
+     */
     public void setViewOthersPlaytimePermission(String viewOthersPlaytimePermission) {
         this.viewOthersPlaytimePermission = viewOthersPlaytimePermission;
     }
 
+    /**
+     * Sets the permission that is required to view your remaining playtime.
+     *
+     * @param viewPlaytimePermission the string representing the required permission
+     */
     public void setViewPlaytimePermission(String viewPlaytimePermission) {
         this.viewPlaytimePermission = viewPlaytimePermission;
     }
