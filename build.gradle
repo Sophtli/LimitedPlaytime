@@ -31,7 +31,7 @@ dependencies {
     implementation 'com.zaxxer:HikariCP:5.0.1'
 
     compileOnly 'org.jetbrains:annotations:23.0.0'
-    compileOnly 'me.clip:placeholderapi:2.11.2'
+    compileOnly 'me.clip:placeholderapi:2.11.3'
     compileOnly spigot('1.19.2')
 }
 
